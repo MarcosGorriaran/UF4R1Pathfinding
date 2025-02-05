@@ -9,6 +9,10 @@ public class GameManager : MonoBehaviour
     public int Size;
     public BoxCollider2D Panel;
     public GameObject token;
+    public LineRenderer lineDrawer;
+    public Color startPosColor;
+    public Color endPosColor;
+    public Color defaultColor;
     //private int[,] GameMatrix; //0 not chosen, 1 player, 2 enemy de momento no hago nada con esto
     private Node[,] NodeMatrix;
     private int startPosx, startPosy;
@@ -28,7 +32,7 @@ public class GameManager : MonoBehaviour
                 GameMatrix[i, j] = 0;
             }
         }*/
-        
+        lineDrawer.positionCount = 0;
         startPosx = Random.Range(0, Size);
         startPosy = Random.Range(0, Size);
         do
@@ -67,7 +71,22 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < Size; j++)
             {
-                Instantiate(token, NodeMatrix[i, j].RealPosition, Quaternion.identity);
+                GameObject instantiatedObject = Instantiate(token, NodeMatrix[i, j].RealPosition, Quaternion.identity);
+                if(instantiatedObject.TryGetComponent(out SpriteRenderer sprite))
+                {
+                    if(i == startPosx && j == startPosy)
+                    {
+                        sprite.color = startPosColor;
+                    }
+                    else if (i == endPosx && j == endPosy)
+                    {
+                        sprite.color = endPosColor;
+                    }
+                    else
+                    {
+                        sprite.color = defaultColor;
+                    }
+                }
                 Debug.Log("Element (" + j + ", " + i + ")");
                 Debug.Log("Position " + NodeMatrix[i, j].RealPosition);
                 Debug.Log("Heuristic " + NodeMatrix[i, j].Heuristic);
@@ -114,6 +133,10 @@ public class GameManager : MonoBehaviour
                 node.WayList.Add(new Way(NodeMatrix[x + 1, y + 1], Calculs.DiagonalDistance));
             }
         }
+    }
+    public void SetPath()
+    {
+        
     }
 
 }
