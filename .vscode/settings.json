@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "PathAlgorithmTask.sln"
+    "dotnet.defaultSolution": "UF4R1Pathfinding.sln"
 }
