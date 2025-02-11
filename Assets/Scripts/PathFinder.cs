@@ -1,27 +1,37 @@
 
 
 using System.Collections.Generic;
+using System.Linq;
 
 public class PathFinder
 {
     Node _startingPoint;
     Node[,] _nodeList;
 
-    private List<Way> _queue = new List<Way>();
-    public List<Way> closedList { get; private set; } = new List<Way>();
+    private List<Node> _queue = new List<Node>();
+    private List<Node> closedList { get; set; } = new List<Node>();
+    public List<Way> Path { get; private set; }
     public PathFinder(IntVector2 startingPoint , Node[,]nodeList)
     {
         _nodeList = nodeList;
-        _startingPoint = nodeList[startingPoint.X, startingPoint.Y];
+        _queue.Add(nodeList[startingPoint.X, startingPoint.Y]);
     }
-    private void FindPath(Node processPoint)
+    
+    public Node FindPath()
     {
-        foreach(Way option in processPoint.WayList)
+        while (true)
         {
-            
-            _queue.Add(option);
-        }
-    }
+            float minCost = _queue.Min(obj => obj.GetPathCost());
+            Node searchNode = _queue.Where(obj => obj.GetPathCost() == minCost).FirstOrDefault();
+            _queue.Remove(searchNode);
+            closedList.Add(searchNode);
+            if (searchNode.Heuristic == 0)
+            {
+                return searchNode;
+            }
 
+        }
+        
+    }
 
 }
