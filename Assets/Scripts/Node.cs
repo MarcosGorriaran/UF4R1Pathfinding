@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Node
@@ -21,6 +22,17 @@ public class Node
     public List<Way> WayList { get {  return _wayList; } set { _wayList = value; } }
 
     #endregion
+    public float GetPathCost()
+    {
+        Node searchNode = _nodeParent;
+        float totalCost = _heuristic;
+        while(searchNode != null)
+        {
+            totalCost += searchNode.WayList.Where(obj => obj.NodeDestiny == this).First().Cost;
+            searchNode = searchNode.NodeParent;
+        }
+        return totalCost;
+    }
     public Node(int positionX, int positionY, Vector2 realPos)
     {
         _positionX = positionX;
