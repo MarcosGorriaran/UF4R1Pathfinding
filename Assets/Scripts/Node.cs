@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +27,18 @@ public class Node
     {
         Node searchNode = _nodeParent;
         float totalCost = _heuristic;
-        while(searchNode != null)
+        try
         {
-            totalCost += searchNode.WayList.Where(obj => obj.NodeDestiny == this).First().Cost;
-            searchNode = searchNode.NodeParent;
+            while (searchNode != null)
+            {
+                totalCost += searchNode.WayList.Where(obj => obj.NodeDestiny == this).First().Cost;
+                searchNode = searchNode.NodeParent;
+            }
         }
+        catch (InvalidOperationException)
+        {
+        }
+        
         return totalCost;
     }
     public Node(int positionX, int positionY, Vector2 realPos)

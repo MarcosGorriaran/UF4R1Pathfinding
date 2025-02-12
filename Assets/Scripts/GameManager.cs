@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     private Node[,] NodeMatrix;
     private int startPosx, startPosy;
     private int endPosx, endPosy;
+    public float stepByStepLength;
     void Awake()
     {
         Instance = this;
@@ -134,9 +135,47 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    public void SetPath()
+    public void ReturnResultImediatly()
     {
-        
+        Node destination = new PathFinder(new IntVector2(startPosx, startPosy), NodeMatrix).FindPath();
+        int lineIndex = 0;
+        Node actualNode = destination;
+        do
+        {
+            int actualIndex = lineDrawer.positionCount;
+            lineDrawer.positionCount++;
+            lineDrawer.SetPosition(actualIndex, new Vector3(actualNode.RealPosition.x, actualNode.RealPosition.y, -5));
+            actualNode = actualNode.NodeParent;
+        } while (actualNode != null);
+    }
+    public void ReturnResultOnSteps()
+    {
+        StartCoroutine(StepByStepProcedure(new PathFinder(new IntVector2(startPosx,startPosy),NodeMatrix)));
+    }
+    private void DrawPath(Node endPath)
+    {
+        int lineIndex = 0;
+        lineDrawer.positionCount = 0;
+        Node actualNode = endPath;
+        do
+        {
+            int actualIndex = lineDrawer.positionCount;
+            lineDrawer.positionCount++;
+            lineDrawer.SetPosition(actualIndex, new Vector3(actualNode.RealPosition.x, actualNode.RealPosition.y, -5));
+            actualNode = actualNode.NodeParent;
+        } while (actualNode != null);
+    }
+    private IEnumerator StepByStepProcedure(PathFinder pathFinder)
+    {
+        Node actualNode = pathFinder.FindNextStep();
+        DrawPath(actualNode);
+        yield return new WaitForSeconds(stepByStepLength);
+        while(actualNode.Heuristic != 0)
+        {
+            actualNode = pathFinder.FindNextStep();
+            DrawPath(actualNode);
+            yield return new WaitForSeconds(stepByStepLength);
+        }
     }
 
 }
